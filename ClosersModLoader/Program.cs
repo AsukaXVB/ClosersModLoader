@@ -12,6 +12,7 @@ namespace ClosersModLoader
     {
         private static Timer timer;
         static int flag = 0;
+        static bool exited = true;
         static string mod_font;
         static string ori_font;
         static string run_font;
@@ -19,11 +20,10 @@ namespace ClosersModLoader
         static void Main(string[] args)
         {
             versionCheck();
-            bool exited = true;
             log("PROGRAM STARTED");
             log("STARTING LAUNCHER");
             System.Diagnostics.Process p = new System.Diagnostics.Process();
-            p.StartInfo.FileName = "LAUNCHER.EXE";
+            p.StartInfo.FileName = @"E:\Nexon\CLOSERS\LAUNCHER.EXE";
             detection();
             p.Start();
             while(exited)
@@ -49,14 +49,17 @@ namespace ClosersModLoader
         private static void OnTimedEvent(Object source, ElapsedEventArgs e)
         {
             System.Diagnostics.Process[] p = System.Diagnostics.Process.GetProcessesByName("CLOSERS");
-            if (p.Length != 0 && flag == 0)
+            while(!exited)
             {
-                File.Move(run_font, ori_font);
-                File.Move(mod_font, run_font);
-                log("LOADED, PROGRAM WILL EXIT IN 5 SECS");
-                System.Threading.Thread.Sleep(5000);
-                Environment.Exit(0);
-                flag = 1;
+                if (p.Length == 0 && flag == 0)
+                {
+                    File.Move(run_font, ori_font);
+                    File.Move(mod_font, run_font);
+                    log("LOADED, PROGRAM WILL EXIT IN 5 SECS");
+                    System.Threading.Thread.Sleep(5000);
+                    Environment.Exit(0);
+                    flag = 1;
+                }
             }
         }
 
