@@ -23,7 +23,7 @@ namespace ClosersModLoader
             log("PROGRAM STARTED");
             log("STARTING LAUNCHER");
             System.Diagnostics.Process p = new System.Diagnostics.Process();
-            p.StartInfo.FileName = @"E:\Nexon\CLOSERS\LAUNCHER.EXE";
+            p.StartInfo.FileName = "LAUNCHER.EXE";
             detection();
             p.Start();
             while(exited)
