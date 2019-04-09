@@ -26,21 +26,25 @@ namespace ClosersModLoader
             p.StartInfo.FileName = "LAUNCHER.EXE";
             detection();
             p.Start();
-            while(exited)
+            if(p != null)
             {
-                if(p.HasExited)
-                {
-                    log("CLOSER LAUNCHER STARTED, LOADING MODS...");
-                    exited = false;
-                    setTimer();
-                }
+                p.EnableRaisingEvents = true;
+                p.Exited += new EventHandler(proc_Exited);
             }
             Console.ReadLine();
         }
 
+        static void proc_Exited(object sender, EventArgs e)
+        {
+
+            log("CLOSER LAUNCHER STARTED, LOADING MODS...");
+            exited = false;
+            setTimer();
+        }
+
         static void setTimer()
         {
-            timer = new Timer(4000);
+            timer = new Timer(1000);
             timer.Elapsed += OnTimedEvent;
             timer.AutoReset = true;
             timer.Enabled = true;
@@ -48,10 +52,10 @@ namespace ClosersModLoader
 
         private static void OnTimedEvent(Object source, ElapsedEventArgs e)
         {
-            System.Diagnostics.Process[] p = System.Diagnostics.Process.GetProcessesByName("CLOSERS");
+            System.Diagnostics.Process[] p = System.Diagnostics.Process.GetProcessesByName("CW");
             while(!exited)
             {
-                if (p.Length == 0 && flag == 0)
+                if (p.Length != 0 && flag == 0)
                 {
                     File.Move(run_font, ori_font);
                     File.Move(mod_font, run_font);
@@ -65,7 +69,20 @@ namespace ClosersModLoader
 
         public static void versionCheck()
         {
-            if(File.Exists("SIMHEI.TTF"))
+            try
+            {
+                System.Diagnostics.Process[] p = System.Diagnostics.Process.GetProcessesByName("CW");
+                foreach (System.Diagnostics.Process ps in p)
+                {
+                    ps.Kill();
+                    log("PROCESSES CLEARED");
+                }
+            }catch(Exception ex)
+            { 
+                throw ex;
+            }
+            
+            if (File.Exists("SIMHEI.TTF"))
             {
                 log("DETECTED VERSION: CN");
                 run_font = "SIMHEI.TTF";
