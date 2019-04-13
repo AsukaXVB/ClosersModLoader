@@ -36,15 +36,13 @@ namespace ClosersModLoader
 
         static void proc_Exited(object sender, EventArgs e)
         {
-
             log("CLOSER LAUNCHER STARTED, LOADING MODS...");
-            exited = false;
             setTimer();
         }
 
         static void setTimer()
         {
-            timer = new Timer(1000);
+            timer = new Timer(500);
             timer.Elapsed += OnTimedEvent;
             timer.AutoReset = true;
             timer.Enabled = true;
@@ -53,17 +51,14 @@ namespace ClosersModLoader
         private static void OnTimedEvent(Object source, ElapsedEventArgs e)
         {
             System.Diagnostics.Process[] p = System.Diagnostics.Process.GetProcessesByName("CW");
-            while(!exited)
+            if (p.Length != 0 && flag == 0)
             {
-                if (p.Length != 0 && flag == 0)
-                {
-                    File.Move(run_font, ori_font);
-                    File.Move(mod_font, run_font);
-                    log("LOADED, PROGRAM WILL EXIT IN 5 SECS");
-                    System.Threading.Thread.Sleep(5000);
-                    Environment.Exit(0);
-                    flag = 1;
-                }
+                File.Move(run_font, ori_font);
+                File.Move(mod_font, run_font);
+                log("LOADED, PROGRAM WILL EXIT IN 5 SECS");
+                System.Threading.Thread.Sleep(5000);
+                Environment.Exit(0);
+                flag = 1;
             }
         }
 
@@ -77,7 +72,8 @@ namespace ClosersModLoader
                     ps.Kill();
                     log("PROCESSES CLEARED");
                 }
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             { 
                 throw ex;
             }
