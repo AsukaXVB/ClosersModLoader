@@ -1,23 +1,27 @@
 ﻿using System;
 using System.Timers;
 using System.IO;
-using System.Collections.Generic;
-using System.Linq;
+using System.Windows.Forms;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace ClosersModLoader
 {
     class Program
     {
-        private static Timer timer;
-        static int flag = 0;
-        static bool exited = true;
+        private static System.Timers.Timer timer;
+        public static StringBuilder LogString = new StringBuilder();
         static string mod_font;
         static string ori_font;
         static string run_font;
 
         static void Main(string[] args)
+        {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new fake());
+        }
+
+        public static void start()
         {
             versionCheck();
             log("PROGRAM STARTED");
@@ -26,7 +30,7 @@ namespace ClosersModLoader
             p.StartInfo.FileName = "LAUNCHER.EXE";
             detection();
             p.Start();
-            if(p != null)
+            if (p != null)
             {
                 p.EnableRaisingEvents = true;
                 p.Exited += new EventHandler(proc_Exited);
@@ -42,7 +46,7 @@ namespace ClosersModLoader
 
         static void setTimer()
         {
-            timer = new Timer(500);
+            timer = new System.Timers.Timer(500);
             timer.Elapsed += OnTimedEvent;
             timer.AutoReset = true;
             timer.Enabled = true;
@@ -51,14 +55,14 @@ namespace ClosersModLoader
         private static void OnTimedEvent(Object source, ElapsedEventArgs e)
         {
             System.Diagnostics.Process[] p = System.Diagnostics.Process.GetProcessesByName("CW");
-            if (p.Length != 0 && flag == 0)
+            if (p.Length != 0)
             {
                 File.Move(run_font, ori_font);
                 File.Move(mod_font, run_font);
                 log("LOADED, PROGRAM WILL EXIT IN 5 SECS");
                 System.Threading.Thread.Sleep(5000);
+                SaveLog();
                 Environment.Exit(0);
-                flag = 1;
             }
         }
 
@@ -71,13 +75,14 @@ namespace ClosersModLoader
                 {
                     ps.Kill();
                     log("PROCESSES CLEARED");
+                    System.Threading.Thread.Sleep(300);
                 }
             }
             catch (Exception ex)
-            { 
+            {
                 throw ex;
             }
-            
+
             if (File.Exists("SIMHEI.TTF"))
             {
                 log("DETECTED VERSION: CN");
@@ -88,6 +93,8 @@ namespace ClosersModLoader
                 log("DETECTED VERSION: TW");
                 run_font = "MSJH.TTF";
             }
+            else
+                log("FONT FILE NOT EXISTS!! PLEASE DO A CLIENT VERIFY.");
             ori_font = run_font + ".ori";
             mod_font = run_font + ".mod";
         }
@@ -108,6 +115,32 @@ namespace ClosersModLoader
         static void log(string str)
         {
             Console.Write("[" + DateTime.Now.ToString() + "]" + str + "\r\n");
+            LogString.Append("[" + DateTime.Now.ToString() + "]" + str + "\r\n");
+        }
+
+        public static void SaveLog(bool Append = false, string Path = "./Loader.log")
+        {
+            if (LogString != null && LogString.Length > 0)
+            {
+                if (Append)
+                {
+                    using (StreamWriter file = System.IO.File.AppendText(Path))
+                    {
+                        file.Write(LogString.ToString());
+                        file.Close();
+                        file.Dispose();
+                    }
+                }
+                else
+                {
+                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(Path))
+                    {
+                        file.Write(LogString.ToString());
+                        file.Close();
+                        file.Dispose();
+                    }
+                }
+            }
         }
     }
 }
