@@ -3,6 +3,7 @@ using System.Timers;
 using System.IO;
 using System.Windows.Forms;
 using System.Text;
+using System.Diagnostics;
 
 namespace ClosersModLoader
 {
@@ -26,7 +27,7 @@ namespace ClosersModLoader
             versionCheck();
             log("PROGRAM STARTED");
             log("STARTING LAUNCHER");
-            System.Diagnostics.Process p = new System.Diagnostics.Process();
+            Process p = new Process();
             p.StartInfo.FileName = "LAUNCHER.EXE";
             detection();
             p.Start();
@@ -54,34 +55,30 @@ namespace ClosersModLoader
 
         private static void OnTimedEvent(Object source, ElapsedEventArgs e)
         {
-            System.Diagnostics.Process[] p = System.Diagnostics.Process.GetProcessesByName("CW");
+            Process[] p = Process.GetProcessesByName("CW");
             if (p.Length != 0)
             {
                 File.Move(run_font, ori_font);
                 File.Move(mod_font, run_font);
                 log("LOADED, PROGRAM WILL EXIT IN 5 SECS");
                 System.Threading.Thread.Sleep(5000);
-                SaveLog();
                 Environment.Exit(0);
             }
         }
 
         public static void versionCheck()
         {
-            try
-            {
-                System.Diagnostics.Process[] p = System.Diagnostics.Process.GetProcessesByName("CW");
-                foreach (System.Diagnostics.Process ps in p)
+                try
                 {
-                    ps.Kill();
+                    EndTask("CW");
+                    EndTask("Blackcipher");
                     log("PROCESSES CLEARED");
-                    System.Threading.Thread.Sleep(300);
+                    System.Threading.Thread.Sleep(100);
                 }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
 
             if (File.Exists("SIMHEI.TTF"))
             {
@@ -116,6 +113,7 @@ namespace ClosersModLoader
         {
             Console.Write("[" + DateTime.Now.ToString() + "]" + str + "\r\n");
             LogString.Append("[" + DateTime.Now.ToString() + "]" + str + "\r\n");
+            SaveLog();
         }
 
         public static void SaveLog(bool Append = false, string Path = "./Loader.log")
@@ -124,7 +122,7 @@ namespace ClosersModLoader
             {
                 if (Append)
                 {
-                    using (StreamWriter file = System.IO.File.AppendText(Path))
+                    using (StreamWriter file = File.AppendText(Path))
                     {
                         file.Write(LogString.ToString());
                         file.Close();
@@ -133,13 +131,21 @@ namespace ClosersModLoader
                 }
                 else
                 {
-                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(Path))
+                    using (StreamWriter file = new StreamWriter(Path))
                     {
                         file.Write(LogString.ToString());
                         file.Close();
                         file.Dispose();
                     }
                 }
+            }
+        }
+
+        public static void EndTask(string processName)
+        {
+            foreach (Process process in Process.GetProcessesByName(processName))
+            {
+                process.Kill();
             }
         }
     }
