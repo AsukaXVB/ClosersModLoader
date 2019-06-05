@@ -55,8 +55,9 @@ namespace ClosersModLoader
 
         private static void OnTimedEvent(Object source, ElapsedEventArgs e)
         {
-            Process[] p = Process.GetProcessesByName("CW");
-            if (p.Length != 0)
+            Process[] client = Process.GetProcessesByName("CW");
+            Process[] launcher = Process.GetProcessesByName("CLOSERS");
+            if (client.Length != 0)
             {
                 File.Move(run_font, ori_font);
                 File.Move(mod_font, run_font);
@@ -64,21 +65,28 @@ namespace ClosersModLoader
                 System.Threading.Thread.Sleep(5000);
                 Environment.Exit(0);
             }
+
+            if(launcher.Length == 0 && client.Length == 0)
+            {
+                log("USERS CLOSED LAUNCHER, EXITING...");
+                Environment.Exit(0);
+            }
         }
 
         public static void versionCheck()
         {
-                try
-                {
-                    EndTask("CW");
-                    EndTask("Blackcipher");
-                    log("PROCESSES CLEARED");
-                    System.Threading.Thread.Sleep(100);
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
+
+            try
+            {
+                EndTask("CW");
+                EndTask("Blackcipher");
+                log("PROCESSES CLEARED");
+                System.Threading.Thread.Sleep(100);
+            }
+            catch (Exception ex)
+            {
+            throw ex;
+            }
 
             if (File.Exists("SIMHEI.TTF"))
             {
@@ -91,7 +99,12 @@ namespace ClosersModLoader
                 run_font = "MSJH.TTF";
             }
             else
+            {
                 log("FONT FILE NOT EXISTS!! PLEASE DO A CLIENT VERIFY.");
+                log("EXITING IN 5 SECONDS...");
+                System.Threading.Thread.Sleep(5000);
+                Environment.Exit(0);
+            }
             ori_font = run_font + ".ori";
             mod_font = run_font + ".mod";
         }
