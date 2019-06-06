@@ -59,16 +59,26 @@ namespace ClosersModLoader
             Process[] launcher = Process.GetProcessesByName("CLOSERS");
             if (client.Length != 0)
             {
-                File.Move(run_font, ori_font);
-                File.Move(mod_font, run_font);
-                log("LOADED, PROGRAM WILL EXIT IN 5 SECS");
-                System.Threading.Thread.Sleep(5000);
-                Environment.Exit(0);
+                if(File.Exists(mod_font))
+                {
+                    File.Move(run_font, ori_font);
+                    File.Move(mod_font, run_font);
+                    log("LOADED, PROGRAM WILL EXIT IN 5 SECS");
+                    System.Threading.Thread.Sleep(5000);
+                    Environment.Exit(0);
+                }
+                else
+                {
+                    log("CONNOT FIND CUSTOM FONT FILE, IS IT NAMED WITH \"" + run_font + "\"?");
+                    log("PROGRAM EXITING WITHOUT DOING ANYTHING...");
+                    System.Threading.Thread.Sleep(5000);
+                    Environment.Exit(0);
+                }
             }
 
             if(launcher.Length == 0 && client.Length == 0)
             {
-                log("USERS CLOSED LAUNCHER, EXITING...");
+                log("USER CLOSED LAUNCHER, EXITING...");
                 Environment.Exit(0);
             }
         }
