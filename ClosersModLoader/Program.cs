@@ -64,14 +64,13 @@ namespace ClosersModLoader
                     File.Move(run_font, ori_font);
                     File.Move(mod_font, run_font);
                     log("LOADED, PROGRAM WILL EXIT IN 5 SECS");
+                    timer.Enabled = false;
                     System.Threading.Thread.Sleep(5000);
                     Environment.Exit(0);
                 }
                 else
                 {
-                    log("CONNOT FIND CUSTOM FONT FILE, IS IT NAMED WITH \"" + run_font + "\"?");
                     log("PROGRAM EXITING WITHOUT DOING ANYTHING...");
-                    System.Threading.Thread.Sleep(5000);
                     Environment.Exit(0);
                 }
             }
@@ -85,7 +84,6 @@ namespace ClosersModLoader
 
         public static void versionCheck()
         {
-
             try
             {
                 EndTask("CW");
@@ -124,9 +122,17 @@ namespace ClosersModLoader
             log("CHECKING IF MOD LOADED");
             if (!File.Exists(mod_font))
             {
-                File.Move(run_font, mod_font);
-                File.Move(ori_font, run_font);
-                log("MOD LOADED RESTORED");
+                if (File.Exists(ori_font))
+                {
+                    File.Move(run_font, mod_font);
+                    File.Move(ori_font, run_font);
+                    log("RESTORED LOADED MODS");
+                }else
+                {
+                    log("CONNOT FIND CUSTOM FONT FILE, IS IT NAMED WITH \"" + mod_font + "\"?");
+                    log("IF YOU USE THIS LOADER FOR QUICK RESTARTING THE GAME, YOU CAN JUST IGNORE THIS MESSAGE.");
+                    return;
+                }
             }
             else
                 log("MOD NOT LOADED");
@@ -134,8 +140,8 @@ namespace ClosersModLoader
 
         static void log(string str)
         {
-            Console.Write("[" + DateTime.Now.ToString() + "]" + str + "\r\n");
-            LogString.Append("[" + DateTime.Now.ToString() + "]" + str + "\r\n");
+            Console.Write("[" + DateTime.Now.ToString() + "] " + str + "\r\n");
+            LogString.Append("[" + DateTime.Now.ToString() + "] " + str + "\r\n");
             SaveLog();
         }
 
