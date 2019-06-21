@@ -106,6 +106,11 @@ namespace ClosersModLoader
                 log("DETECTED VERSION: TW");
                 run_font = "MSJH.TTF";
             }
+            else if (File.Exists("MEIRYO.TTC"))
+            {
+                log("DETECTED VERSION: JP");
+                run_font = "MEIRYO.TTC";
+            }
             else
             {
                 log("FONT FILE NOT EXISTS!! PLEASE DO A CLIENT VERIFY.");
